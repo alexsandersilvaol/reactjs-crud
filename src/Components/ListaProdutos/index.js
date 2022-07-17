@@ -1,22 +1,35 @@
 import { useEffect, useState } from 'react';
-import apiData from '../../Service/ProdutoService';
 import { Link } from 'react-router-dom';
 import './index.css';
+import api from '../../api';
 
 function ListaProdutos () {
     const [produtos, setProdutos] = useState([]);
 
     useEffect(() => {
-        setProdutos(apiData.produtos);
+
+        listarProdutos();
+
     }, []);
 
     function handleRemoverProduto( event, id ) {
-        apiData.produtos = apiData.produtos
-            .filter(produto => produto.id !== id);
 
-        setProdutos(apiData.produtos);
+        api.delete(`/produtos/${id}`)
+        .then(res => {
+            console.log(res);
+        });
+
+        listarProdutos();
+
 
         event.preventDefault();
+    }
+
+    function listarProdutos() {
+        api.get('/produtos')
+        .then(res => {
+            setProdutos(res.data.produtos);
+        });
     }
 
     return (

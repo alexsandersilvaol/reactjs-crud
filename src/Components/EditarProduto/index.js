@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import apiData from "../../Service/ProdutoService";
+import api from "../../api";
 
 function EditarProduto () {
     const { id } = useParams();
@@ -10,25 +10,26 @@ function EditarProduto () {
     const [nomeProduto, setNomeProduto] = useState("");
     const [valorProduto, setValorProduto] = useState(0);
 
-    useEffect(() => {
-        const produto = apiData.produtos.find( produto => produto.id === Number(id) );
-        setIdProduto(produto.id);
-        setNomeProduto(produto.nome);
-        setValorProduto(produto.valor);
+    useEffect(() => { 
+        api.get(`/produtos/${id}`).then(res => {
+          console.log(res);
+          const produto = res.data.produtos;
+
+          setIdProduto(produto.id);
+          setNomeProduto(produto.nome);
+          setValorProduto(produto.valor);
+        });
 
     }, []);
 
     function handleAlterarProduto() {
-        const produtos = apiData.produtos;
-        const index = produtos.findIndex( produto => produto.id === Number(id) );
-        const produto = {
-            id: Number(idProduto),
-            nome: nomeProduto,
-            valor: valorProduto
-        };
-
-        produtos[index] = produto;
-        apiData.produtos = produtos;
+        api.put(`/produtos/${id}`, { 
+          id: Number(idProduto),
+          nome: nomeProduto, valor:
+           valorProduto })
+        .then(res => {
+            console.log(res);
+        });
 
         navigate('/');
     }

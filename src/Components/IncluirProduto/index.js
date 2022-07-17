@@ -1,7 +1,7 @@
 import './index.css';
 import { Link, useNavigate }  from 'react-router-dom';
 import { useState } from 'react';
-import apiData from '../../Service/ProdutoService';
+import api from '../../api';
 
 function IncluirProduto () {
     const navigate = useNavigate();
@@ -10,18 +10,10 @@ function IncluirProduto () {
 
 
     function handleIncluirProduto (event) {
-      let idNovo = 1;
-      let produto = null;
-      apiData.produtos.forEach(prod => {
-        if ( produto == null || prod.id > produto.id ) {
-          produto = prod;
-        }
-      });
-      if ( produto ) {
-          idNovo += produto.id;
-      }
-
-      apiData.produtos.push({ id: idNovo, nome: nomeProduto, valor: valorProduto });
+      api.post('/produtos', { nome: nomeProduto, valor: valorProduto })
+        .then(res => {
+            console.log(res);
+        });
 
       navigate("/");
 
