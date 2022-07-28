@@ -10,14 +10,13 @@ function EditarProduto () {
     const [nomeProduto, setNomeProduto] = useState("");
     const [valorProduto, setValorProduto] = useState(0);
 
-    useEffect(() => { 
+    useEffect(() => {
         api.get(`/produtos/${id}`).then(res => {
-          console.log(res);
-          const produto = res.data.produtos;
+          const produto = res.data.data;
 
           setIdProduto(produto.id);
           setNomeProduto(produto.nome);
-          setValorProduto(produto.valor);
+          setValorProduto(produto.preco);
         });
 
     }, []);
@@ -25,7 +24,7 @@ function EditarProduto () {
     function handleAlterarProduto() {
         api.put(`/produtos/${id}`, { 
           id: Number(idProduto),
-          nome: nomeProduto, valor:
+          nome: nomeProduto, preco:
            valorProduto })
         .then(res => {
             console.log(res);

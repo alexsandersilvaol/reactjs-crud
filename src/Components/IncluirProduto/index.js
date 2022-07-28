@@ -10,7 +10,7 @@ function IncluirProduto () {
 
 
     function handleIncluirProduto (event) {
-      api.post('/produtos', { nome: nomeProduto, valor: valorProduto })
+      api.post('/produtos', { nome: nomeProduto, preco: valorProduto })
         .then(res => {
             console.log(res);
         });

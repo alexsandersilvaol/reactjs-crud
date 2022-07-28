@@ -7,20 +7,15 @@ function ListaProdutos () {
     const [produtos, setProdutos] = useState([]);
 
     useEffect(() => {
-
         listarProdutos();
-
     }, []);
 
     function handleRemoverProduto( event, id ) {
 
         api.delete(`/produtos/${id}`)
         .then(res => {
-            console.log(res);
+            listarProdutos();
         });
-
-        listarProdutos();
-
 
         event.preventDefault();
     }
@@ -28,7 +23,7 @@ function ListaProdutos () {
     function listarProdutos() {
         api.get('/produtos')
         .then(res => {
-            setProdutos(res.data.produtos);
+            setProdutos(res.data.data);
         });
     }
 
@@ -48,7 +43,7 @@ function ListaProdutos () {
                     return <tr key={produto.id}>
                             <th>{produto.id}</th>
                             <td>{ produto.nome }</td>
-                            <td>R$ { produto.valor }</td>
+                            <td>R$ { produto.preco }</td>
                             <td> 
                                 <Link className="btn btn-sm btn-primary btn-editar" to={`/editar-produto/${produto.id}`}>Editar</Link>
                                 <button className="btn btn-sm btn-danger" 
