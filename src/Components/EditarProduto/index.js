@@ -1,31 +1,30 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import api from "../../api";
+import { useForm } from "react-hook-form";
 
 function EditarProduto () {
     const { id } = useParams();
     const navigate = useNavigate();
-
-    const [idProduto, setIdProduto] = useState(0);
-    const [nomeProduto, setNomeProduto] = useState("");
-    const [valorProduto, setValorProduto] = useState(0);
+    
+    const { register, handleSubmit, formState: { errors }, setValue } = useForm();
 
     useEffect(() => {
         api.get(`/produtos/${id}`).then(res => {
           const produto = res.data.data;
 
-          setIdProduto(produto.id);
-          setNomeProduto(produto.nome);
-          setValorProduto(produto.preco);
+          setValue('idProduto', produto.id);
+          setValue('nomeProduto', produto.nome);
+          setValue('valorProduto', produto.preco);
         });
 
     }, []);
 
-    function handleAlterarProduto() {
+    function handleAlterarProduto(data) {
         api.put(`/produtos/${id}`, { 
-          id: Number(idProduto),
-          nome: nomeProduto, preco:
-           valorProduto })
+            id: Number(data.idProduto),
+            nome: data.nomeProduto,
+            preco: data.valorProduto })
         .then(res => {
             console.log(res);
         });
@@ -40,18 +39,23 @@ function EditarProduto () {
             <h1>Incluir Produto</h1>
           </div>
 
-              <form onSubmit={ handleAlterarProduto } >
-              <input type="hidden" value={idProduto} />
+              <form onSubmit={ handleSubmit( handleAlterarProduto ) } >
+              <input type="hidden" { ... register("idProduto", { required: true })} />
               <div className="row">
                   <div className="col-md-4">
                     <label >Nome produto</label>
-                    <input type="text" className="form-control" id="nomeProduto" value={nomeProduto}
-                        placeholder="Digite o nome do produto" onChange={(event) => setNomeProduto(event.target.value) } />
+                    <input type="text" className="form-control" id="nomeProduto"
+                        placeholder="Digite o nome do produto"
+                        { ... register("nomeProduto", { required: true })} />
+
+                        { errors.nomeProduto && <div className="invalid" > O nome do produto é obrigatório !</div>}
                   </div>
                   <div className="col-md-4">
                     <label>Valor produto</label>
-                    <input type="number" className="form-control" id="valorProduto" value={valorProduto}
-                      placeholder="Digite o valor do produto" onChange={(event) => setValorProduto(event.target.value) } />
+                    <input type="number" className="form-control" id="valorProduto"
+                      placeholder="Digite o valor do produto"
+                      { ... register("valorProduto", { required: true, min: 1 })} />
+                      { errors.valorProduto && <div className="invalid"> O valor do produto é obrigatório e deve ser no mínimo 1!</div>}
                   </div>
                   <div className="col-md-4 align-self-end">
                     <button type="submit" className="btn btn-sm btn-primary botao-salvar">Salvar</button>
