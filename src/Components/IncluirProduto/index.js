@@ -1,6 +1,6 @@
 import './index.css';
 import { Link, useNavigate }  from 'react-router-dom';
-import api from '../../api';
+import api from '../../Services/api';
 import { useForm } from "react-hook-form";
 
 function IncluirProduto () {

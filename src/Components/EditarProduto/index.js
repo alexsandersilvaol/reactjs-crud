@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import api from "../../api";
+import api from "../../Services/api";
 import { useForm } from "react-hook-form";
 
 function EditarProduto () {
@@ -16,7 +16,7 @@ function EditarProduto () {
           setValue('idProduto', produto.id);
           setValue('nomeProduto', produto.nome);
           setValue('valorProduto', produto.preco);
-        });
+        })
 
     }, []);
 
@@ -27,9 +27,11 @@ function EditarProduto () {
             preco: data.valorProduto })
         .then(res => {
             console.log(res);
-        });
+            navigate('/');
+        }).catch(res => {
+          alert(res.response.data.message);
+        });;
 
-        navigate('/');
     }
 
 

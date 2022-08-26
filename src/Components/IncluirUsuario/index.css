@@ -1,0 +1,12 @@
+.botao-salvar {
+    margin-right: 1rem;
+}
+
+.titulo-pagina {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.invalid {
+    color: #dc3545;
+}
