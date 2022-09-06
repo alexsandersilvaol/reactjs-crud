@@ -2,6 +2,7 @@ import './index.css';
 import { Link, useNavigate }  from 'react-router-dom';
 import api from '../../Services/api';
 import { useForm } from "react-hook-form";
+import { exibirMensagem } from '../../Services/toastr-service';
 
 function IncluirProduto () {
     const navigate = useNavigate();
@@ -9,10 +10,16 @@ function IncluirProduto () {
     const onSubmit = (data) =>  { 
       api.post('/produtos', { nome: data.produtoNome, preco: data.valorProduto })
         .then(res => {
-            console.log(res);
+            exibirMensagem('Produto cadastrado com sucesso!', 'success');
+            navigate("/");
+        }).catch(res => {
+          let mensagem = 'Ocorreu um erro tente novamente!';
+          if ( res.response.status === 400 )
+            mensagem = res.response.data.errors.join(',');
+
+          exibirMensagem(mensagem, 'error');
         });
 
-      navigate("/");
     };
 
     return (

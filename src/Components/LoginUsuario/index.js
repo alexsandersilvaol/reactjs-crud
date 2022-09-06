@@ -4,6 +4,8 @@ import api from '../../Services/api';
 import { login } from '../../Services/auth';
 import { useForm } from "react-hook-form";
 
+import { exibirMensagem } from '../../Services/toastr-service';
+
 function LoginUsuario () {
     const navigate = useNavigate();
     const { register, handleSubmit, formState: { errors } } = useForm();
@@ -15,10 +17,15 @@ function LoginUsuario () {
         .then(res => {
           if ( res.data.success ) {
             login(res.data.data);
+            exibirMensagem('Login efetuado com sucesso!', 'success');
             navigate("/");
           }
         }).catch(res => {
-          alert(res.response.data.errors.join(','));
+          let mensagem = 'Ocorreu um erro tente novamente!';
+          if ( res.response.status === 400 )
+            mensagem = res.response.data.errors.join(',');
+
+          exibirMensagem(mensagem, 'error');
         });
     };
 

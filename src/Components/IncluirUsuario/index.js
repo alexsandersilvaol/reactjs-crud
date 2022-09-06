@@ -15,6 +15,13 @@ function IncluirUsuario () {
          })
         .then(res => {
             console.log(res);
+
+        }).catch(res => {
+          let mensagem = 'Ocorreu um erro tente novamente!';
+          if ( res.response.status === 400 )
+            mensagem = res.response.data.errors.join(',');
+
+          exibirMensagem(mensagem, 'error');
         });
 
       navigate("/");

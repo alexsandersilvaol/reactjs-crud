@@ -2,11 +2,15 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './index.css';
 import api from '../../Services/api';
+import { exibirMensagem } from '../../Services/toastr-service';
+import { isAuthenticated } from '../../Services/auth';
 
 function ListaProdutos () {
     const [produtos, setProdutos] = useState([]);
+    const [estaLogado, setEstaLogado] = useState(false);
 
     useEffect(() => {
+        setEstaLogado(isAuthenticated());
         listarProdutos();
     }, []);
 
@@ -14,8 +18,15 @@ function ListaProdutos () {
 
         api.delete(`/produtos/${id}`)
         .then(res => {
+            exibirMensagem('Produto removido com sucesso!', 'success');
             listarProdutos();
-        });
+        }).catch(res => {
+            let mensagem = 'Ocorreu um erro tente novamente!';
+            if ( res.response.status === 400 )
+              mensagem = res.response.data.errors.join(',');
+  
+            exibirMensagem(mensagem, 'error');
+          });
 
         event.preventDefault();
     }
@@ -24,7 +35,31 @@ function ListaProdutos () {
         api.get('/produtos')
         .then(res => {
             setProdutos(res.data.data);
+        }).catch(res => {
+           let mensagem = 'Ocorreu um erro tente novamente!';
+           if ( res.response.status === 400 )
+              mensagem = res.response.data.errors.join(',');
+  
+           exibirMensagem(mensagem, 'error');
         });
+    }
+
+    function BotaoExcluir ( produto ) {
+        if ( estaLogado ) {
+            return <button className="btn btn-sm btn-danger" 
+            onClick={ (event) => handleRemoverProduto(event, produto.id ) }>Excluir</button>
+        } else {
+            return <></>;
+        }
+    }
+
+    function BotaoAlterar( produto ) {
+        if ( estaLogado ) {
+            return <Link className="btn btn-sm btn-primary btn-editar" 
+                to={`/editar-produto/${produto.id}`}>Editar</Link>
+        } else {
+            return <></>;
+        }
     }
 
     return (
@@ -44,10 +79,9 @@ function ListaProdutos () {
                             <th>{produto.id}</th>
                             <td>{ produto.nome }</td>
                             <td>R$ { produto.preco }</td>
-                            <td> 
-                                <Link className="btn btn-sm btn-primary btn-editar" to={`/editar-produto/${produto.id}`}>Editar</Link>
-                                <button className="btn btn-sm btn-danger" 
-                                    onClick={ (event) => handleRemoverProduto(event, produto.id ) }>Excluir</button>
+                            <td>
+                                <BotaoExcluir produto={produto} /> 
+                                <BotaoAlterar produto={produto} />
                             </td>
                         </tr>
                 })

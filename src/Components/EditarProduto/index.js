@@ -26,11 +26,15 @@ function EditarProduto () {
             nome: data.nomeProduto,
             preco: data.valorProduto })
         .then(res => {
-            console.log(res);
-            navigate('/');
+            exibirMensagem('Produto alterado com sucesso!', 'success');
+            navigate("/");
         }).catch(res => {
-          alert(res.response.data.message);
-        });;
+          let mensagem = 'Ocorreu um erro tente novamente!';
+          if ( res.response.status === 400 )
+            mensagem = res.response.data.errors.join(',');
+
+          exibirMensagem(mensagem, 'error');
+        });
 
     }
 
